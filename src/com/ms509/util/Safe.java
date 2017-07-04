@@ -7,6 +7,7 @@ public final class Safe {
 	public static String ACTION;
 	public static String PARAM1;
 	public static String PARAM2;
+	public static String PARAM3;
 
 	public static String ASP_BASE64;
 	public static String ASP_MAKE;
@@ -17,6 +18,7 @@ public final class Safe {
 	public static String ASP_SAVEFILE;
 	public static String ASP_DELETE;
 	public static String ASP_RENAME;
+	public static String ASP_RETIME;
 	public static String ASP_NEWDICT;
 	public static String ASP_UPLOAD;
 	public static String ASP_DOWNLOAD;
@@ -35,6 +37,7 @@ public final class Safe {
 	public static String ASPX_SAVEFILE;
 	public static String ASPX_DELETE;
 	public static String ASPX_RENAME;
+	public static String ASPX_RETIME;
 	public static String ASPX_NEWDICT;
 	public static String ASPX_UPLOAD;
 	public static String ASPX_DOWNLOAD;
@@ -51,6 +54,7 @@ public final class Safe {
 	public static String PHP_SAVEFILE;
 	public static String PHP_DELETE;
 	public static String PHP_RENAME;
+	public static String PHP_RETIME;
 	public static String PHP_NEWDICT;
 	public static String PHP_UPLOAD;
 	public static String PHP_DOWNLOAD;
@@ -65,6 +69,7 @@ public final class Safe {
 	public static String JSP_SAVEFILE;
 	public static String JSP_DELETE;
 	public static String JSP_RENAME;
+	public static String JSP_RETIME;
 	public static String JSP_NEWDICT;
 	public static String JSP_UPLOAD;
 	public static String JSP_DOWNLOAD;
@@ -81,13 +86,26 @@ public final class Safe {
 	public static String CUS_SAVEFILE;
 	public static String CUS_DELETE;
 	public static String CUS_RENAME;
+	public static String CUS_RETIME;
 	public static String CUS_NEWDICT;
 	public static String CUS_UPLOAD;
 	public static String CUS_DOWNLOAD;
 	public static String CUS_SHELL;
+	public static String CUS_SHELL_SPL;
+	public static String CUS_SHELL_SPR;
 	
 	public static String COMMON_SQL_STRING;
 	
 	public static String PASS;
 	public static String SYSTEMSP;
+	
+	public static String PROXY_HOST;
+	public static String PROXY_PORT;
+	public static String PROXY_USER;
+	public static String PROXY_PASS;
+	public static String PROXY_TYPE;
+	public static String PROXY_STATUS;
+	
+	public static String REQUEST_STATUS;
+	public static String REQUEST_DATA;
 }

